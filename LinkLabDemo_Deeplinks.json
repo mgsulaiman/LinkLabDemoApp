@@ -1,37 +1,44 @@
-[
-  {
-    "title": "Home",
-    "url": "linklabdemo://home",
-    "timeDelay": 10
-  },
-  {
-    "title": "Profile",
-    "url": "linklabdemo://profile/user42",
-    "timeDelay": 10
-  },
-  {
-    "title": "Product",
-    "url": "linklabdemo://product/123",
-    "timeDelay": 10
-  },
-  {
-    "title": "Search",
-    "url": "linklabdemo://search?q=shoes",
-    "timeDelay": 10
-  },
-  {
-    "title": "Settings",
-    "url": "linklabdemo://settings",
-    "timeDelay": 10
-  },
-  {
-    "title": "Special Offer",
-    "url": "linklabdemo://offer/SAVE20",
-    "timeDelay": 10
-  },
-  {
-    "title": "Alt Scheme Home",
-    "url": "demoapp://home",
-    "timeDelay": 10
-  }
-]
+{
+  "bundleIdentifier" : "com.linklab.demo",
+  "environment" : "Production",
+  "appName" : "DemoApp",
+  "deeplinks" : [
+    {
+      "title" : "Product",
+      "url" : "linklabdemo:\/\/product\/123",
+      "timeDelay" : 10
+    },
+    {
+      "title" : "Home",
+      "url" : "linklabdemo:\/\/home",
+      "timeDelay" : 10
+    },
+    {
+      "timeDelay" : 10,
+      "title" : "Profile",
+      "url" : "linklabdemo:\/\/profile\/user42",
+      "date" : 795683820.982026
+    },
+    {
+      "timeDelay" : 10,
+      "title" : "Search",
+      "url" : "linklabdemo:\/\/search?q=shoes"
+    },
+    {
+      "timeDelay" : 10,
+      "title" : "Settings",
+      "url" : "linklabdemo:\/\/settings"
+    },
+    {
+      "timeDelay" : 10,
+      "title" : "Special Offer",
+      "url" : "linklabdemo:\/\/offer\/SAVE20"
+    },
+    {
+      "timeDelay" : 10,
+      "title" : "Alt Scheme Home",
+      "url" : "demoapp:\/\/home"
+    }
+  ],
+  "devBundleIdentifier" : "com.linklab.demo"
+}
