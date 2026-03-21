@@ -3,7 +3,11 @@
 A sample iOS app built to demonstrate and test deeplink handling with [**LinkLab**](https://github.com/mgsulaiman/LinkLab) — the macOS menu bar app for iOS developers to test deeplinks on the Simulator.
 
 <p align="center">
-  <img src="https://github.com/mgsulaiman/LinkLab/raw/main/Assets/LinkLabIcon.png" width="128" alt="LinkLab Icon" />
+  <img src="https://github.com/mgsulaiman/LinkLab/raw/main/icon.png" width="128" alt="LinkLab Icon" />
+</p>
+
+<p align="center">
+  <img src="Assets/demo-screenshot.png" width="300" alt="LinkLab Demo App Screenshot" />
 </p>
 
 ---
