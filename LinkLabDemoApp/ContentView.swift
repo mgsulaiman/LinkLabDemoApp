@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var router: DeeplinkRouter
+    @State private var selectedHistoryTab = 0
 
     var body: some View {
         NavigationStack {
@@ -23,52 +24,37 @@ struct ContentView: View {
 
                 Divider()
 
-                // Deeplink history log
+                // History section with tabs
                 VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                        Image(systemName: "clock.arrow.circlepath")
-                            .font(.system(size: 12))
-                        Text("Deeplink History")
-                            .font(.system(size: 13, weight: .semibold))
-                        Spacer()
-                        Text("\(router.deeplinkHistory.count)")
-                            .font(.system(size: 11, weight: .bold, design: .monospaced))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 2)
-                            .background(Capsule().fill(.blue.opacity(0.15)))
-                    }
-                    .foregroundStyle(.secondary)
+                    Picker("", selection: $selectedHistoryTab) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "link")
+                                .font(.system(size: 10))
+                            Text("Deeplinks")
+                            Text("\(router.deeplinkHistory.count)")
+                                .font(.system(size: 9, weight: .bold, design: .monospaced))
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 1)
+                                .background(Capsule().fill(.blue.opacity(0.15)))
+                        }.tag(0)
 
-                    if router.deeplinkHistory.isEmpty {
-                        Text("No deeplinks received yet. Send one from LinkLab!")
-                            .font(.system(size: 12))
-                            .foregroundStyle(.tertiary)
-                            .padding(.vertical, 8)
+                        HStack(spacing: 4) {
+                            Image(systemName: "bell.fill")
+                                .font(.system(size: 10))
+                            Text("Notifications")
+                            Text("\(router.notificationHistory.count)")
+                                .font(.system(size: 9, weight: .bold, design: .monospaced))
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 1)
+                                .background(Capsule().fill(.purple.opacity(0.15)))
+                        }.tag(1)
+                    }
+                    .pickerStyle(.segmented)
+
+                    if selectedHistoryTab == 0 {
+                        deeplinkHistoryView
                     } else {
-                        ScrollView {
-                            LazyVStack(spacing: 4) {
-                                ForEach(Array(router.deeplinkHistory.enumerated()), id: \.offset) { _, entry in
-                                    HStack(spacing: 8) {
-                                        Circle()
-                                            .fill(.green)
-                                            .frame(width: 6, height: 6)
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            Text(entry.url)
-                                                .font(.system(size: 11, design: .monospaced))
-                                                .lineLimit(1)
-                                            Text(entry.date.formatted(date: .omitted, time: .standard))
-                                                .font(.system(size: 9))
-                                                .foregroundStyle(.tertiary)
-                                        }
-                                        Spacer()
-                                    }
-                                    .padding(.vertical, 4)
-                                    .padding(.horizontal, 8)
-                                    .background(RoundedRectangle(cornerRadius: 6).fill(.ultraThinMaterial))
-                                }
-                            }
-                        }
-                        .frame(maxHeight: 150)
+                        notificationHistoryView
                     }
                 }
                 .padding(12)
@@ -76,6 +62,71 @@ struct ContentView: View {
             }
             .navigationTitle("LinkLab Demo")
             .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+
+    // MARK: - Deeplink History
+
+    private var deeplinkHistoryView: some View {
+        Group {
+            if router.deeplinkHistory.isEmpty {
+                Text("No deeplinks received yet. Send one from LinkLab!")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.tertiary)
+                    .padding(.vertical, 8)
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 4) {
+                        ForEach(Array(router.deeplinkHistory.enumerated()), id: \.offset) { _, entry in
+                            HStack(spacing: 8) {
+                                Circle()
+                                    .fill(.green)
+                                    .frame(width: 6, height: 6)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(entry.url)
+                                        .font(.system(size: 11, design: .monospaced))
+                                        .lineLimit(1)
+                                    Text(entry.date.formatted(date: .omitted, time: .standard))
+                                        .font(.system(size: 9))
+                                        .foregroundStyle(.tertiary)
+                                }
+                                Spacer()
+                            }
+                            .padding(.vertical, 4)
+                            .padding(.horizontal, 8)
+                            .background(RoundedRectangle(cornerRadius: 6).fill(.ultraThinMaterial))
+                        }
+                    }
+                }
+                .frame(maxHeight: 150)
+            }
+        }
+    }
+
+    // MARK: - Notification History
+
+    private var notificationHistoryView: some View {
+        Group {
+            if router.notificationHistory.isEmpty {
+                VStack(spacing: 6) {
+                    Text("No notifications received yet.")
+                        .font(.system(size: 12))
+                        .foregroundStyle(.tertiary)
+                    Text("Send one from LinkLab's Push Notifications tab!")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.quaternary)
+                }
+                .padding(.vertical, 8)
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 4) {
+                        ForEach(router.notificationHistory) { entry in
+                            NotificationHistoryRow(entry: entry)
+                        }
+                    }
+                }
+                .frame(maxHeight: 150)
+            }
         }
     }
 
@@ -96,6 +147,77 @@ struct ContentView: View {
             OfferScreen(code: code)
         case .unknown(let url):
             UnknownScreen(url: url)
+        }
+    }
+}
+
+// MARK: - Notification History Row
+
+struct NotificationHistoryRow: View {
+    let entry: NotificationEntry
+    @State private var showPayload = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 8) {
+                ZStack {
+                    Circle()
+                        .fill(.purple.opacity(0.15))
+                        .frame(width: 24, height: 24)
+                    Image(systemName: entry.tapped ? "hand.tap.fill" : "bell.fill")
+                        .font(.system(size: 10))
+                        .foregroundStyle(.purple)
+                }
+
+                VStack(alignment: .leading, spacing: 1) {
+                    if !entry.title.isEmpty {
+                        Text(entry.title)
+                            .font(.system(size: 11, weight: .semibold))
+                            .lineLimit(1)
+                    }
+                    if !entry.body.isEmpty {
+                        Text(entry.body)
+                            .font(.system(size: 10))
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+
+                Spacer(minLength: 0)
+
+                if entry.deeplink != nil {
+                    Image(systemName: "link")
+                        .font(.system(size: 8))
+                        .foregroundStyle(.blue)
+                        .padding(4)
+                        .background(Circle().fill(.blue.opacity(0.1)))
+                }
+
+                Text(entry.date.formatted(date: .omitted, time: .standard))
+                    .font(.system(size: 9))
+                    .foregroundStyle(.tertiary)
+            }
+
+            if showPayload {
+                Text(entry.payload)
+                    .font(.system(size: 9, design: .monospaced))
+                    .foregroundStyle(.secondary)
+                    .padding(6)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .fill(Color.primary.opacity(0.04))
+                    )
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+        .padding(.vertical, 6)
+        .padding(.horizontal, 8)
+        .background(RoundedRectangle(cornerRadius: 8).fill(.ultraThinMaterial))
+        .onTapGesture {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                showPayload.toggle()
+            }
         }
     }
 }
@@ -595,7 +717,7 @@ struct OfferScreen: View {
                 .offset(y: appeared ? 0 : 20)
                 .animation(.easeOut(duration: 0.4).delay(0.6), value: appeared)
 
-                Spacer()
+                    Spacer()
             }
         }
         .onAppear {

@@ -27,10 +27,35 @@ This demo app registers a custom URL scheme (`linklabdemo://`) and routes incomi
 | `linklabdemo://settings` | Settings | App settings list |
 | `linklabdemo://offer/SAVE20` | Offer | Promo screen with confetti |
 
+### Example Push Notifications
+
+The demo app also supports push notification testing via LinkLab's Push Notifications tab. When a notification is sent, it appears in the app's Notification History log.
+
+| Notification | Description |
+|-------------|-------------|
+| Welcome Push | Basic alert with title, body, and badge |
+| Push with Deeplink | Tapping navigates to `linklabdemo://product/456` |
+| Silent Push | Content-available push with no visible alert |
+| Offer Notification | Rich alert with subtitle, badge, category, and deeplink |
+
+Add a `"deeplink"` key to the custom payload JSON in LinkLab to trigger navigation when the notification is tapped:
+
+```json
+{
+  "aps": {
+    "alert": { "title": "New Product", "body": "Check it out!" },
+    "sound": "default"
+  },
+  "deeplink": "linklabdemo://product/456"
+}
+```
+
 ### Features
 
 - Animated screen transitions on every deeplink
-- Live deeplink history log with timestamps
+- Live deeplink and notification history logs with timestamps
+- Tap a notification row to expand and see the full JSON payload
+- Notifications with a `"deeplink"` key route the app on tap
 - Screen timer showing time since last navigation
 - Handles unknown/malformed deeplinks gracefully
 

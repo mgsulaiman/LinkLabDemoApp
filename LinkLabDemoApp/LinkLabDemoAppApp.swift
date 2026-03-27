@@ -11,6 +11,10 @@ struct LinkLabDemoAppApp: App {
                 .onOpenURL { url in
                     deeplinkRouter.handle(url)
                 }
+                .onAppear {
+                    NotificationHandler.shared.router = deeplinkRouter
+                    NotificationHandler.shared.requestPermission()
+                }
         }
     }
 }

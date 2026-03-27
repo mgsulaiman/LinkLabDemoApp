@@ -40,5 +40,38 @@
       "url" : "demoapp:\/\/home"
     }
   ],
-  "devBundleIdentifier" : "com.linklab.demo"
+  "devBundleIdentifier" : "com.linklab.demo",
+  "examplePushNotifications" : [
+    {
+      "name" : "Welcome Push",
+      "title" : "Hey there!",
+      "body" : "Welcome to the demo app. Tap to explore.",
+      "badge" : 1,
+      "sound" : "default"
+    },
+    {
+      "name" : "Push with Deeplink",
+      "title" : "New Product Available",
+      "body" : "Check out product #456 — just arrived!",
+      "sound" : "default",
+      "customPayload" : "{\"deeplink\": \"linklabdemo://product/456\"}"
+    },
+    {
+      "name" : "Silent Push",
+      "title" : "",
+      "body" : "",
+      "contentAvailable" : true,
+      "customPayload" : "{\"refresh\": \"catalog\"}"
+    },
+    {
+      "name" : "Offer Notification",
+      "title" : "Flash Sale!",
+      "subtitle" : "Limited time only",
+      "body" : "Use code SAVE20 for 20% off. Tap to claim.",
+      "badge" : 3,
+      "sound" : "default",
+      "category" : "PROMO",
+      "customPayload" : "{\"deeplink\": \"linklabdemo://offer/SAVE20\"}"
+    }
+  ]
 }
