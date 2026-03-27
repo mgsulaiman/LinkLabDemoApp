@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct LinkLabDemoAppApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var deeplinkRouter = DeeplinkRouter()
 
     var body: some Scene {
@@ -12,8 +13,8 @@ struct LinkLabDemoAppApp: App {
                     deeplinkRouter.handle(url)
                 }
                 .onAppear {
-                    NotificationHandler.shared.router = deeplinkRouter
-                    NotificationHandler.shared.requestPermission()
+                    // Connect the router — also delivers any pending notification from cold launch
+                    appDelegate.router = deeplinkRouter
                 }
         }
     }

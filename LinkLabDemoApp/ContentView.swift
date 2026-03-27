@@ -25,36 +25,40 @@ struct ContentView: View {
                 Divider()
 
                 // History section with tabs
-                VStack(alignment: .leading, spacing: 6) {
-                    Picker("", selection: $selectedHistoryTab) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "link")
-                                .font(.system(size: 10))
-                            Text("Deeplinks")
-                            Text("\(router.deeplinkHistory.count)")
-                                .font(.system(size: 9, weight: .bold, design: .monospaced))
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 1)
-                                .background(Capsule().fill(.blue.opacity(0.15)))
-                        }.tag(0)
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 0) {
+                        historyTab(
+                            icon: "link",
+                            label: "Deeplinks",
+                            count: router.deeplinkHistory.count,
+                            color: .blue,
+                            isSelected: selectedHistoryTab == 0
+                        ) {
+                            withAnimation(.easeInOut(duration: 0.2)) { selectedHistoryTab = 0 }
+                        }
 
-                        HStack(spacing: 4) {
-                            Image(systemName: "bell.fill")
-                                .font(.system(size: 10))
-                            Text("Notifications")
-                            Text("\(router.notificationHistory.count)")
-                                .font(.system(size: 9, weight: .bold, design: .monospaced))
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 1)
-                                .background(Capsule().fill(.purple.opacity(0.15)))
-                        }.tag(1)
+                        historyTab(
+                            icon: "bell.fill",
+                            label: "Notifications",
+                            count: router.notificationHistory.count,
+                            color: .purple,
+                            isSelected: selectedHistoryTab == 1
+                        ) {
+                            withAnimation(.easeInOut(duration: 0.2)) { selectedHistoryTab = 1 }
+                        }
                     }
-                    .pickerStyle(.segmented)
+                    .padding(3)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(Color(.systemGray5))
+                    )
 
                     if selectedHistoryTab == 0 {
                         deeplinkHistoryView
+                            .transition(.opacity)
                     } else {
                         notificationHistoryView
+                            .transition(.opacity)
                     }
                 }
                 .padding(12)
@@ -128,6 +132,36 @@ struct ContentView: View {
                 .frame(maxHeight: 150)
             }
         }
+    }
+
+    private func historyTab(icon: String, label: String, count: Int, color: Color, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 5) {
+                Image(systemName: icon)
+                    .font(.system(size: 10, weight: .semibold))
+                Text(label)
+                    .font(.system(size: 12, weight: .semibold))
+                if count > 0 {
+                    Text("\(count)")
+                        .font(.system(size: 9, weight: .bold, design: .monospaced))
+                        .foregroundStyle(isSelected ? color : .secondary)
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 1)
+                        .background(
+                            Capsule().fill(isSelected ? color.opacity(0.15) : Color.secondary.opacity(0.1))
+                        )
+                }
+            }
+            .foregroundStyle(isSelected ? .primary : .secondary)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 7)
+            .background(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(isSelected ? Color(.systemBackground) : .clear)
+                    .shadow(color: isSelected ? .black.opacity(0.06) : .clear, radius: 2, y: 1)
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     @ViewBuilder
